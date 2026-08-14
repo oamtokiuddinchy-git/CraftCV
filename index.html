@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart CV Builder</title>
+    <!-- Modern Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-content">
+            <h1>স্মার্ট সিভি বিল্ডার</h1>
+            <p>আপনার প্রফেশনাল সিভি তৈরি করুন সহজেই</p>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Form Section -->
+        <section class="form-section">
+            <div class="card-header">
+                <h2>১. সিভি টেমপ্লেট সিলেক্ট করুন</h2>
+            </div>
+            
+            <div class="template-selector">
+                <button class="template-btn active" onclick="selectTemplate(1)">
+                    <span class="tpl-title">Modern Clean</span>
+                    <span class="tpl-desc">ফরম্যাট ১</span>
+                </button>
+                <button class="template-btn" onclick="selectTemplate(2)">
+                    <span class="tpl-title">Dark Sidebar</span>
+                    <span class="tpl-desc">ফরম্যাট ২</span>
+                </button>
+                <button class="template-btn" onclick="selectTemplate(3)">
+                    <span class="tpl-title">Classic BD</span>
+                    <span class="tpl-desc">ফরম্যাট ৩</span>
+                </button>
+            </div>
+
+            <form id="cvForm">
+                <div class="card-header">
+                    <h2>২. ব্যক্তিগত তথ্য (Personal Information)</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>ছবি আপলোড করুন:</label>
+                    <input type="file" id="inputPhoto" accept="image/*" onchange="previewImage(event)">
+                </div>
+                
+                <div class="form-group">
+                    <label>পূর্ণ নাম (Full Name):</label>
+                    <input type="text" id="inputName" placeholder="আপনার পূর্ণ নাম লিখুন" oninput="generateCV()">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>পদবি / পেশা (Job Title):</label>
+                        <input type="text" id="inputTitle" placeholder="যেমন: Software Engineer" oninput="generateCV()">
+                    </div>
+                    <div class="form-group">
+                        <label>ফোন নম্বর (Phone Number):</label>
+                        <input type="text" id="inputPhone" placeholder="যেমন: +8801XXXXXXXXX" oninput="generateCV()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ইমেইল (Email):</label>
+                        <input type="email" id="inputEmail" placeholder="যেমন: example@email.com" oninput="generateCV()">
+                    </div>
+                    <div class="form-group">
+                        <label>ঠিকানা (Address):</label>
+                        <input type="text" id="inputAddress" placeholder="যেমন: ঢাকা, বাংলাদেশ" oninput="generateCV()">
+                    </div>
+                </div>
+
+                <div class="card-header">
+                    <h2>৩. ক্যারিয়ার সামারি (Career Objective)</h2>
+                </div>
+                <div class="form-group">
+                    <textarea id="inputObjective" rows="3" placeholder="এখানে ক্যারিয়ার সামারি বা অবজেক্টিভ লিখুন..." oninput="generateCV()"></textarea>
+                </div>
+
+                <!-- Dynamic Work Experience -->
+                <div class="card-header flex-between">
+                    <h2>৪. কাজের অভিজ্ঞতা (Work Experience)</h2>
+                    <button type="button" class="btn-add" onclick="addExperienceGroup()">+ Add Experience</button>
+                </div>
+                <div id="experienceContainer"></div>
+
+                <!-- Dynamic Education -->
+                <div class="card-header flex-between">
+                    <h2>৫. শিক্ষাগত যোগ্যতা (Education)</h2>
+                    <button type="button" class="btn-add" onclick="addEducationGroup()">+ Add Education</button>
+                </div>
+                <div id="educationContainer"></div>
+
+                <div class="card-header">
+                    <h2>৬. দক্ষতা ও অন্যান্য (Skills & Others)</h2>
+                </div>
+                <div class="form-group">
+                    <label>দক্ষতাসমূহ (Skills - কমা দিয়ে আলাদা করুন):</label>
+                    <input type="text" id="inputSkills" placeholder="যেমন: JavaScript, Python, UI/UX Design, Leadership" oninput="generateCV()">
+                </div>
+                <div class="form-group">
+                    <label>ভাষাসমূহ (Languages):</label>
+                    <input type="text" id="inputLanguages" placeholder="যেমন: English (Fluent), Bangla (Native)" oninput="generateCV()">
+                </div>
+                <div class="form-group">
+                    <label>শখ / রুচি (Hobbies):</label>
+                    <input type="text" id="inputHobbies" placeholder="যেমন: Reading, Travelling, Sports" oninput="generateCV()">
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="window.print()">PDF ডাউনলোড করুন</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Hidden CV Paper for Print/PDF Generation -->
+        <div id="cvPaper" class="cv-paper format-1"></div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="app-footer">
+        <p>Developed with ❤️ by <span>OMAR MOHAMMAD TOKI UDDIN CHOWDHURY</span></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
