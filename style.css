@@ -46,7 +46,7 @@ body {
 }
 
 .app-container {
-    max-width: 800px; /* কেন্দ্রবিন্দুতে আনার জন্য সাইজ অ্যাডজাস্ট করা হয়েছে */
+    max-width: 800px;
     margin: 25px auto;
     padding: 0 20px;
 }
@@ -205,13 +205,14 @@ body {
     color: white;
 }
 
-/* CV Paper Section Hidden on Normal Screen */
+/* Screen-এ CV Paper এবং Preview অপশন পুরোপুরি বন্ধ */
+.preview-section,
 .cv-paper {
-    display: none;
+    display: none !important;
 }
 
 /* ==========================================
-   CV FORMAT TEMPLATES (FOR PRINT ONLY)
+   CV FORMAT TEMPLATES (FOR PRINT/PDF ONLY)
    ========================================== */
 
 /* FORMAT 1: Modern Clean */
@@ -273,7 +274,7 @@ body {
 }
 
 /* ==========================================
-   PURE WHITE A4 PRINT & PDF FIX (NO EXTRA PAGE)
+   PURE WHITE A4 PRINT & PDF FIX
    ========================================== */
 
 @page {
@@ -309,7 +310,7 @@ body {
     }
 
     .cv-paper {
-        display: block !important; /* প্রিন্ট করার মুহূর্তে শো করবে */
+        display: block !important; /* প্রিন্ট দেওয়ার সময়েই কেবল ভিজিবল হবে */
         width: 210mm !important;
         min-height: 297mm !important;
         height: auto !important;
