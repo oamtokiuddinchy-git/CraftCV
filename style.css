@@ -1,327 +1,216 @@
-/* ==========================================
-   GLOBAL STYLES & VARIABLES
-   ========================================== */
+let selectedFormat = 1;
+let uploadedPhotoBase64 = '';
 
-:root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-color: #0f172a;
-    --bg-color: #f1f5f9;
-    --card-bg: #ffffff;
-    --border-color: #cbd5e1;
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --danger-color: #ef4444;
-    --font-main: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+function selectTemplate(formatNumber) {
+    selectedFormat = formatNumber;
+    
+    // Update active button state
+    const buttons = document.querySelectorAll('.template-btn');
+    buttons.forEach((btn, index) => {
+        if (index + 1 === formatNumber) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    generateCV();
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-main);
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    line-height: 1.6;
-}
-
-.app-header {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: #ffffff;
-    padding: 25px 20px;
-    text-align: center;
-}
-
-.app-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.app-header h1 span {
-    color: #38bdf8;
-    font-size: 1.4rem;
-}
-
-.app-container {
-    max-width: 800px;
-    margin: 25px auto;
-    padding: 0 20px;
-}
-
-/* ==========================================
-   FORM SECTION STYLES
-   ========================================== */
-
-.form-section {
-    width: 100%;
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.card-header {
-    margin-top: 18px;
-    margin-bottom: 12px;
-    border-bottom: 2px solid #f1f5f9;
-    padding-bottom: 6px;
-}
-
-.flex-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-header h2 {
-    font-size: 1rem;
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-/* Template Selector Buttons */
-.template-selector {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.template-btn {
-    flex: 1;
-    padding: 10px;
-    border: 1.5px solid var(--border-color);
-    background: #f8fafc;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-}
-
-.template-btn.active {
-    border-color: var(--primary-color);
-    background: #eff6ff;
-}
-
-.template-btn .tpl-title {
-    font-weight: 600;
-    font-size: 0.85rem;
-    display: block;
-}
-
-.template-btn .tpl-desc {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-/* Inputs & Form Groups */
-.form-group {
-    margin-bottom: 12px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.82rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.form-group input, 
-.form-group textarea {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.88rem;
-    outline: none;
-}
-
-.form-group input:focus, 
-.form-group textarea:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-}
-
-.form-row {
-    display: flex;
-    gap: 10px;
-}
-
-.form-row .form-group {
-    flex: 1;
-}
-
-/* Dynamic Add/Remove Cards */
-.dynamic-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    position: relative;
-}
-
-.btn-remove {
-    background: var(--danger-color);
-    color: white;
-    border: none;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    float: right;
-}
-
-.btn-add {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* Action Button */
-.action-buttons {
-    margin-top: 20px;
-}
-
-.btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-}
-
-/* Screen-এ CV Paper এবং Preview অপশন পুরোপুরি বন্ধ */
-.preview-section,
-.cv-paper {
-    display: none !important;
-}
-
-/* ==========================================
-   CV FORMAT TEMPLATES (FOR PRINT/PDF ONLY)
-   ========================================== */
-
-/* FORMAT 1: Modern Clean */
-.format-1 { padding: 40px; }
-.f1-header { display: flex; gap: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px; }
-.f1-photo { width: 110px; height: 130px; object-fit: cover; border-radius: 6px; }
-.f1-name { font-size: 20pt; font-weight: 700; color: #0f172a; }
-.f1-title { font-size: 11pt; color: #2563eb; font-weight: 600; margin-bottom: 8px; }
-.f1-contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 8.5pt; color: #475569; }
-.f1-section-title { font-size: 10.5pt; font-weight: 700; color: #0f172a; text-transform: uppercase; margin-top: 18px; margin-bottom: 8px; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
-.f1-item { margin-bottom: 10px; font-size: 9pt; }
-.f1-item-header { display: flex; justify-content: space-between; font-weight: 700; }
-.f1-item-sub { font-style: italic; color: #64748b; font-size: 8.5pt; }
-.f1-skill-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-.f1-tag { background: #f1f5f9; color: #1e293b; padding: 3px 8px; border-radius: 4px; font-size: 8pt; font-weight: 500; }
-
-/* FORMAT 2: Dark Sidebar */
-.format-2 { display: flex; min-height: 297mm; }
-.f2-sidebar { width: 32%; background-color: #0f172a; color: #f8fafc; padding: 25px 15px; }
-.f2-main { width: 68%; padding: 30px 25px; }
-.f2-photo { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin: 0 auto 12px; display: block; border: 3px solid #38bdf8; }
-.f2-sidebar-name { text-align: center; font-size: 14pt; font-weight: 700; }
-.f2-sidebar-title { text-align: center; font-size: 9pt; color: #38bdf8; margin-bottom: 20px; }
-.f2-sidebar-heading { font-size: 9.5pt; font-weight: 700; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 3px; margin-top: 18px; margin-bottom: 8px; }
-.f2-sidebar-text { font-size: 8.5pt; color: #cbd5e1; line-height: 1.5; }
-.f2-main-heading { font-size: 11pt; font-weight: 700; color: #0f172a; border-bottom: 2px solid #0f172a; padding-bottom: 3px; margin-top: 18px; margin-bottom: 10px; }
-
-/* FORMAT 3: Classic BD */
-.format-3 { padding: 35px; font-family: 'Times New Roman', Times, serif; }
-.f3-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-.f3-name { font-size: 16pt; font-weight: bold; }
-.f3-photo { width: 100px; height: 120px; border: 1px solid #000; object-fit: cover; }
-.f3-box-title { background: #f1f5f9; border: 1px solid #000; padding: 3px 6px; font-weight: bold; font-size: 10pt; margin-top: 12px; margin-bottom: 8px; }
-.f3-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 9pt; }
-.f3-table th, .f3-table td { border: 1px solid #000; padding: 5px; }
-
-/* ==========================================
-   APP FOOTER STYLES
-   ========================================== */
-
-.app-footer {
-    text-align: center;
-    padding: 20px 10px;
-    margin-top: 30px;
-    background: #0f172a;
-    color: #94a3b8;
-    font-size: 0.88rem;
-    border-top: 1px solid #1e293b;
-}
-
-.app-footer p {
-    margin: 0;
-}
-
-.app-footer span {
-    color: #38bdf8;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-/* ==========================================
-   PURE WHITE A4 PRINT & PDF FIX
-   ========================================== */
-
-@page {
-    size: A4 portrait;
-    margin: 0;
-}
-
-@media print {
-    html, body {
-        width: 210mm;
-        height: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        overflow: visible !important;
-    }
-
-    .app-header, 
-    .form-section, 
-    .action-buttons,
-    .app-footer {
-        display: none !important;
-    }
-
-    .app-container {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        display: block !important;
-    }
-
-    .cv-paper {
-        display: block !important; /* প্রিন্ট দেওয়ার সময়েই কেবল ভিজিবল হবে */
-        width: 210mm !important;
-        min-height: 297mm !important;
-        height: auto !important;
-        margin: 0 auto !important;
-        box-shadow: none !important;
-        border: none !important;
-        background: #ffffff !important;
-        box-sizing: border-box !important;
-    }
-
-    .f1-item, .f2-main-heading, .f3-box-title {
-        page-break-inside: avoid;
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedPhotoBase64 = e.target.result;
+            generateCV();
+        };
+        reader.readAsDataURL(file);
     }
 }
+
+function addExperienceGroup() {
+    const container = document.getElementById('experienceContainer');
+    const div = document.createElement('div');
+    div.className = 'dynamic-card';
+    div.innerHTML = `
+        <button type="button" class="btn-remove" onclick="this.parentElement.remove(); generateCV();">মুছুন</button>
+        <div class="form-group">
+            <label>কোম্পানির নাম ও পদবি:</label>
+            <input type="text" class="exp-title" placeholder="যেমন: Software Engineer - ABC Tech" oninput="generateCV()">
+        </div>
+        <div class="form-group">
+            <label>সময়কাল (Duration):</label>
+            <input type="text" class="exp-date" placeholder="যেমন: Jan 2022 - Present" oninput="generateCV()">
+        </div>
+        <div class="form-group">
+            <label>দায়িত্ব/বিবরণ:</label>
+            <textarea class="exp-desc" rows="2" placeholder="আপনার কাজের বিবরণ লিখুন..." oninput="generateCV()"></textarea>
+        </div>
+    `;
+    container.appendChild(div);
+    generateCV();
+}
+
+function addEducationGroup() {
+    const container = document.getElementById('educationContainer');
+    const div = document.createElement('div');
+    div.className = 'dynamic-card';
+    div.innerHTML = `
+        <button type="button" class="btn-remove" onclick="this.parentElement.remove(); generateCV();">মুছুন</button>
+        <div class="form-group">
+            <label>ডিগ্রি ও প্রতিষ্ঠানের নাম:</label>
+            <input type="text" class="edu-title" placeholder="যেমন: B.Sc in CSE - Dhaka University" oninput="generateCV()">
+        </div>
+        <div class="form-group">
+            <label>পাস করার সাল / সিজিপিএ:</label>
+            <input type="text" class="edu-date" placeholder="যেমন: Passing Year: 2023 | CGPA: 3.80" oninput="generateCV()">
+        </div>
+    `;
+    container.appendChild(div);
+    generateCV();
+}
+
+function generateCV() {
+    const paper = document.getElementById('cvPaper');
+    if (!paper) return;
+
+    // Get Form Inputs
+    const name = document.getElementById('inputName')?.value || 'আপনার নাম';
+    const title = document.getElementById('inputTitle')?.value || 'আপনার পদবি';
+    const phone = document.getElementById('inputPhone')?.value || '+8801XXXXXXXXX';
+    const email = document.getElementById('inputEmail')?.value || 'example@email.com';
+    const address = document.getElementById('inputAddress')?.value || 'ঢাকা, বাংলাদেশ';
+    const objective = document.getElementById('inputObjective')?.value || '';
+    const skills = document.getElementById('inputSkills')?.value || '';
+    const languages = document.getElementById('inputLanguages')?.value || '';
+    const hobbies = document.getElementById('inputHobbies')?.value || '';
+
+    // Collect Experience Items
+    const expElements = document.querySelectorAll('#experienceContainer .dynamic-card');
+    let expHTML = '';
+    expElements.forEach(item => {
+        const expTitle = item.querySelector('.exp-title')?.value;
+        const expDate = item.querySelector('.exp-date')?.value;
+        const expDesc = item.querySelector('.exp-desc')?.value;
+        if (expTitle) {
+            expHTML += `
+                <div class="f1-item">
+                    <div class="f1-item-header">
+                        <span>${expTitle}</span>
+                        <span>${expDate || ''}</span>
+                    </div>
+                    ${expDesc ? `<p style="font-size: 8.5pt; color: #475569; margin-top:2px;">${expDesc}</p>` : ''}
+                </div>
+            `;
+        }
+    });
+
+    // Collect Education Items
+    const eduElements = document.querySelectorAll('#educationContainer .dynamic-card');
+    let eduHTML = '';
+    eduElements.forEach(item => {
+        const eduTitle = item.querySelector('.edu-title')?.value;
+        const eduDate = item.querySelector('.edu-date')?.value;
+        if (eduTitle) {
+            eduHTML += `
+                <div class="f1-item">
+                    <div class="f1-item-header">
+                        <span>${eduTitle}</span>
+                        <span>${eduDate || ''}</span>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    paper.className = `cv-paper format-${selectedFormat}`;
+
+    // FORMAT 1: Modern Clean
+    if (selectedFormat === 1) {
+        paper.innerHTML = `
+            <div class="f1-header">
+                ${uploadedPhotoBase64 ? `<img src="${uploadedPhotoBase64}" class="f1-photo">` : ''}
+                <div>
+                    <div class="f1-name">${name}</div>
+                    <div class="f1-title">${title}</div>
+                    <div class="f1-contact-grid">
+                        <div><b>Phone:</b> ${phone}</div>
+                        <div><b>Email:</b> ${email}</div>
+                        <div style="grid-column: span 2;"><b>Address:</b> ${address}</div>
+                    </div>
+                </div>
+            </div>
+            ${objective ? `<div class="f1-section-title">Career Objective</div><p style="font-size: 9pt; color: #334155;">${objective}</p>` : ''}
+            ${expHTML ? `<div class="f1-section-title">Work Experience</div>${expHTML}` : ''}
+            ${eduHTML ? `<div class="f1-section-title">Education</div>${eduHTML}` : ''}
+            ${skills ? `<div class="f1-section-title">Skills</div><div class="f1-skill-tags">${skills.split(',').map(s => `<span class="f1-tag">${s.trim()}</span>`).join('')}</div>` : ''}
+            ${languages ? `<div class="f1-section-title">Languages</div><p style="font-size: 9pt;">${languages}</p>` : ''}
+            ${hobbies ? `<div class="f1-section-title">Hobbies</div><p style="font-size: 9pt;">${hobbies}</p>` : ''}
+        `;
+    } 
+    // FORMAT 2: Dark Sidebar (ALL PREVIEWS & EXTRA LABELS REMOVED)
+    else if (selectedFormat === 2) {
+        paper.innerHTML = `
+            <div class="f2-sidebar">
+                ${uploadedPhotoBase64 ? `<img src="${uploadedPhotoBase64}" class="f2-photo">` : ''}
+                <div class="f2-sidebar-name">${name}</div>
+                <div class="f2-sidebar-title">${title}</div>
+                
+                <div class="f2-sidebar-heading">Contact</div>
+                <div class="f2-sidebar-text">
+                    <p><b>Phone:</b><br>${phone}</p>
+                    <p style="margin-top:5px;"><b>Email:</b><br>${email}</p>
+                    <p style="margin-top:5px;"><b>Address:</b><br>${address}</p>
+                </div>
+
+                ${skills ? `
+                    <div class="f2-sidebar-heading">Skills</div>
+                    <div class="f2-sidebar-text">${skills.split(',').map(s => `• ${s.trim()}<br>`).join('')}</div>
+                ` : ''}
+
+                ${languages ? `
+                    <div class="f2-sidebar-heading">Languages</div>
+                    <div class="f2-sidebar-text">${languages}</div>
+                ` : ''}
+
+                ${hobbies ? `
+                    <div class="f2-sidebar-heading">Hobbies</div>
+                    <div class="f2-sidebar-text">${hobbies}</div>
+                ` : ''}
+            </div>
+            
+            <div class="f2-main">
+                ${objective ? `<div class="f2-main-heading">Career Objective</div><p style="font-size: 9pt; color: #334155;">${objective}</p>` : ''}
+                ${expHTML ? `<div class="f2-main-heading">Work Experience</div>${expHTML}` : ''}
+                ${eduHTML ? `<div class="f2-main-heading">Education</div>${eduHTML}` : ''}
+            </div>
+        `;
+    } 
+    // FORMAT 3: Classic BD
+    else if (selectedFormat === 3) {
+        paper.innerHTML = `
+            <div class="f3-header">
+                <div>
+                    <div class="f3-name">${name}</div>
+                    <p style="font-size: 10pt; font-weight: bold;">${title}</p>
+                    <p style="font-size: 9pt; margin-top: 5px;">Address: ${address}</p>
+                    <p style="font-size: 9pt;">Mobile: ${phone}</p>
+                    <p style="font-size: 9pt;">Email: ${email}</p>
+                </div>
+                ${uploadedPhotoBase64 ? `<img src="${uploadedPhotoBase64}" class="f3-photo">` : ''}
+            </div>
+            ${objective ? `<div class="f3-box-title">CAREER OBJECTIVE</div><p style="font-size: 9pt; text-align: justify;">${objective}</p>` : ''}
+            ${expHTML ? `<div class="f3-box-title">EXPERIENCE</div>${expHTML}` : ''}
+            ${eduHTML ? `<div class="f3-box-title">ACADEMIC QUALIFICATION</div>${eduHTML}` : ''}
+            ${skills ? `<div class="f3-box-title">SPECIAL SKILLS</div><p style="font-size: 9pt;">${skills}</p>` : ''}
+            ${languages ? `<div class="f3-box-title">LANGUAGE PROFICIENCY</div><p style="font-size: 9pt;">${languages}</p>` : ''}
+            ${hobbies ? `<div class="f3-box-title">HOBBIES</div><p style="font-size: 9pt;">${hobbies}</p>` : ''}
+        `;
+    }
+}
+
+// Initial Call
+document.addEventListener('DOMContentLoaded', () => {
+    generateCV();
+});
